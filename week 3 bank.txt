@@ -1,0 +1,116 @@
+create database Bank;
+use Bank;
+create table branch
+(
+   branch_name varchar (30), 
+branch_city varchar (30),
+assets int,
+primary key(branch_name)
+);
+create table bank_acc
+(
+acc_no int,
+branch_name varchar(30),
+balance int,
+primary key(acc_no),
+foreign key(branch_name)references branch(branch_name)
+);
+create table bank_customer
+(
+cust_name varchar (30),
+cust_street varchar(30),
+cust_city varchar (30),
+primary key (cust_name)
+);
+create table depositer
+(
+cust_name varchar (30),
+acc_no int,
+foreign key(cust_name) references bank_customer (cust_name),
+foreign key(acc_no) references bank_acc(acc_no)
+);
+create table loan
+(
+loan_no int,
+branch_name varchar (30),
+amount int,
+primary key(loan_no),
+foreign key(branch_name)references branch(branch_name)
+);
+insert into branch
+values("SBI_Hitex","Hyderabad",598700),
+("kaushik_bank","Singapore",990009),
+("Jaggu_bank","Kualalampur",987765),
+("Kalyan_Bank","Miami",988887765),
+("Jitendra_Bank","Kingston",988887);
+insert into bank_acc
+values (10900,"SBI_Hitex",10009876),
+(11900,"kaushik_bank",9876555),
+(12900,"Jaggu_bank""Jaggu_bank",900000),
+(13900,"Kalyan_Bank",1290022),
+(14900,"Jitendra_Bank",198822);
+insert into bank_customer
+values ("jigar","NR Colony","Bengaluru"),
+("Ajay","KPHB","Hyderabad"),
+("Aditya","Allepy","kochin"),
+("Ananya","Mini","Miami"),
+("Akash","Hitex","Hyderabad");
+insert into depositer
+values ("jigar",10900),
+("Ajay",11900),
+("Aditya",12900),
+("Ananya",13900),
+("Akash",14900);
+insert into loan
+values (1010,"SBI_Hitex",19000),
+(1020,"kaushik_bank",189000),
+(1030,"Jaggu_bank",100090),
+(1040,"Kalyan_Bank",189000),
+(1050,"Jitendra_Bank",123456);
+select *
+from branch;
+select *
+from bank_acc ;
+select *
+from bank_customer ;
+select *
+from depositer ;
+select *
+from loan ;
+select branch_name,(assets/100000) as Assets_in_lakhs
+from branch;
+create view loanview2 as
+select branch_name,(amount) as total_loan
+from loan
+group by branch_name;
+select*
+from loanview2;
+
+select cust_name,acc_no
+from depositer
+where acc_no in (select acc_no
+                  from bank_acc
+                  where branch_name="SBI_Hitex")
+group by cust_name
+having count(cust_name)>=2;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
