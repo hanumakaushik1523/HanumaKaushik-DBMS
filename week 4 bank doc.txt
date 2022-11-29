@@ -1,0 +1,133 @@
+create database Bank224
+Use Bank224;
+create table branch
+(
+branch_name varchar (30),
+branch_city varchar(30),
+assets int,
+primary key(branch_name)
+);
+create table Bankaccount
+(
+Acc_no int,
+branch_name varchar (30),
+balance int,
+primary key(Acc_no),
+foreign key(branch_name) references branch (branch_name)
+);
+create table BankCustomer
+(
+Customer_name varchar(30),
+Customer_street varchar(30),
+City varchar (30),
+primary key (Customer_name)
+);
+create table Depositer
+(
+Customer_name varchar(30),
+Acc_no int,
+primary key(Customer_name,Acc_no),
+foreign key(Acc_no)references Bankaccount(Acc_no),
+foreign key(Customer_name) references BankCustomer (Customer_name)
+);
+create table Loan
+(
+loan_num int,
+branch_name varchar (30),
+amount int,
+primary key(loan_num),
+foreign key(branch_name) references branch (branch_name)
+);
+create table Borrower
+(
+Customer_name varchar(30),
+loan_num int,
+primary key (Customer_name,loan_num),
+foreign key(Customer_name) references Bankcustomer(Customer_name),
+foreign key (loan_num) references Loan  (loan_num)
+);
+insert into branch
+values ("SBI Chamrajpet","Bangalore",50000),
+("SBI Residency Road","Bangalore",10000),
+("SBI Shivaji Road","Bombay",20000),
+("SBI Parliament Road","Delhi",10000),
+("SBI JantarMantar","Delhi",20000),
+("SBI MantriMarg","Delhi",200000);
+insert into Bankaccount
+values (1,"SBI Chamrajpet",2000),
+(2,"SBI Residency Road",5000),
+(3,"SBI Shivaji Road",6000),
+(4,"SBI Parliament Road",9000),
+(5,"SBI JantarMantar",8000),
+(6,"SBI Shivaji Road",4000),
+(8,"SBI Residency Road",4000),
+(9,"SBI Parliament Road",3000),
+(10,"SBI Residency Road",5000),
+(11,"SBI JantarMantar",2000),
+(12,"SBI MantriMarg",2000);
+insert into BankCustomer
+value ("Avinash","Bull Temple Road","Bangalore"),
+("Dinesh","Bannerghatta Road","Bangalore"),
+("Mohan","National College Road","Bangalore"),
+("Nikil","Akbar Road","Delhi"),
+("Ravi","PrithviRaj Road","Delhi");
+insert into Depositer
+values ("Avinash",1),
+("Dinesh",2),
+("Nikil",4),
+("Ravi",5),
+("Avinash",8),
+("Nikil",9),
+("Dinesh",10),
+("Nikil",11),
+("Nikil",12);
+insert into Loan
+values (1,"SBI Chamrajpet",1000),
+(2,"SBI Residency Road",2000),
+(3,"SBI Shivaji Road",3000),
+(4,"SBI Parliament Road",4000),
+(5,"SBI JantarMantar",5000);
+insert into Borrower
+values ("Avinash",1),
+("Dinesh",2),
+("Mohan",3),
+("Nikil",4),
+("Ravi",5);
+select * 
+from branch;
+select * 
+from Bankaccount;
+select * 
+from Depositer;
+select * 
+from BankCustomer;
+select * 
+from Loan;
+select * 
+from Borrower;
+select d.Customer_name,b.branch_name
+from Bankaccount b,Depositer d
+where b.Acc_no=d.Acc_no and b.branch_name = any (select branch_name
+					    from branch
+                        where branch_city="Delhi");
+select Customer_name
+from Borrower
+where Customer_name not in (select Customer_name
+							from Depositer);
+select branch_name, branch_city from branch where assets > 
+(select max(assets) from branch where branch_city ='Bangalore')
+and branch_city != ('Bangalore');
+select *
+from Borrower b
+where b.loan_num = any(select l.loan_num 
+                       from Loan l 
+                       where l.branch_name = any(select branch_name 
+												from branch 
+                                                where branch_city = "Bangalore"))
+												and Customer_name in (select Customer_name from Depositer);
+delete from Bankaccount 
+where branch_name in (select branch_name 
+                      from branch 
+                      where branch_city like ("Bombay"));
+update Bankaccount set balance =balance + (balance*0.05);
+select * from Bankaccount;
