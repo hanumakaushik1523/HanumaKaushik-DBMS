@@ -1,0 +1,113 @@
+create database Employee22
+use Employee22
+create table Department
+(
+dept_no varchar (30),
+d_name varchar (30),
+d_loc varchar(30),
+primary key (dept_no)
+);
+create table Employee
+(
+Emp_no varchar (30),
+Emp_name varchar (30),
+Mgr_no int,
+Hiredate date,
+sal int,
+dept_no varchar(30),
+primary key (Emp_no),
+foreign key(dept_no) references Department (dept_no)
+);
+create table Incentives
+(
+Emp_no varchar (30),
+Incentive_date date,
+Incentive_amount int,
+primary key (Emp_no,Incentive_date),
+foreign key(Emp_no)references Employee(Emp_no)
+);
+create table Project
+(
+P_no int,
+p_loc varchar (30),
+P_name varchar (30),
+primary key (P_no)
+);
+create table Assigned_to
+(
+Emp_no varchar (30),
+P_no int,
+job_role varchar (30),
+primary key (Emp_no,P_no),
+foreign key (Emp_no) references Employee (Emp_no),
+foreign key (P_no) references Project (P_no)
+);
+insert into Department
+values("1","Logistics","Bengaluru"),
+("2","Statistics","Mysuru"),
+("3","Marketing","Hyderabad"),
+("4","Design","Bengaluru"),
+("5","Management","Mysuru"),
+("6","Finance","Bombay");
+insert into Employee
+values("101","Avinash",null,'2021-10-09',16000,"1"),
+("102","Dinesh",107,'2021-03-07',12500,"1"),
+("103","Balaji",101,'2021-10-08',29750,"1"),
+("104","Sovesh",110,'2021-02-09',12500,"2"),
+("105","Sordelu",108,'2021-03-04',28500,"2"),
+("106","Hasbulla",108,'2022-01-05',24500,"3"),
+("107","Tacitus Kilgore",105,'2021-11-19',28450,"4"),
+("108","Govardhan Prasad",109,'2021-02-13',50000,"5"),
+("109","Champika",108,'2021-07-14',11000,"5"),
+("110","Robin",105,'2021-12-31',30000,"5");
+insert into Incentives
+values ("101",'2022-10-01',5000),
+("106",'2022-11-02',7000),
+("102",'2022-05-03',5000),
+("105",'2022-07-05',5000),
+("110",'2022-08-07',9000);
+insert into Project
+values (01,"Hyderabad","Project_Zero"),
+(02,"Mysuru","Project_Alpha"),
+(03,"Hyderabad","Project_Bozo"),
+(04,"Bengaluru","Project_Waaris"),
+(05,"Bombay","Project_Onslaught"),
+(06,"Mysuru","Project_DivideBY");
+insert into Assigned_to
+values("101",01,"Developer"),
+("103",04,"Tester"),
+("102",05,"Manager"),
+("105",03,"Supervisor"),
+("107",02,"Team Leader"),
+("106",06,"Executive Manager");
+select *
+from Department;
+select *
+from Employee;
+select *
+from Incentives;
+select *
+from Project;
+select *
+from Assigned_to;
+select m.Emp_name
+from Employee m where sal>=
+                         (select avg(e.sal)
+                         from Employee  e
+                         where m.Emp_no=e.Mgr_no
+                         group by e.Mgr_no);
+select E.Emp_name 
+from Employee E,Employee M 
+where E.Mgr_no=M.Emp_no and M.dept_no=E.dept_no;
+select m.Emp_name,count(*)
+from Employee e,Employee m 
+where e.Mgr_no=m.Emp_no 
+group by m.Emp_name having count(*)=
+                               (select max(mycount) 
+                               from (select count(*) mycount from Employee group by Mgr_no) a);
+select *
+from Employee e,Incentives i 
+where e.Emp_no=i.Emp_no and 1=
+                              (select count(*)
+                              from Incentives j
+                              where i.Incentive_amount<j.Incentive_amount);
