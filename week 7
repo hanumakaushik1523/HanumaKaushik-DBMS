@@ -1,0 +1,95 @@
+create database Supplier12
+use Supplier12
+create table Supplier
+(
+s_id int ,
+s_name char(25),
+city char(25),
+primary key (s_id)
+);
+create table Parts
+(
+pid int,
+pname varchar (30),
+colour varchar (30),
+primary key (pid)
+);
+create table Catalog
+(
+s_id int,
+pid int,
+cost int,
+primary key (s_id,pid),
+foreign key(s_id) references Supplier (s_id),
+foreign key(PID) references parts (pid)
+);
+insert into Supplier
+values (10001,"Acme Widget","Bangalore"),
+(10002,"Johns","Kolkata"),
+(10003,"Vimal","Mumbai"),
+(10004,"Reliance","Delhi");
+insert into Parts
+values (20001,"Book","Red"),
+(20002,"Pen","Red"),
+(20003,"Pencil","Green"),
+(20004,"Mobile","Green"),
+(20005,"Charger","Black");
+insert into Catalog
+values (10001,20001,10),
+(10001,20002,10),
+(10001,20003,30),
+(10001,20004,10),
+(10001,20005,10),
+(10002,20001,10),
+(10002,20002,20),
+(10003,20003,30),
+(10004,20003,40);
+select *
+from Supplier
+select *
+from Parts
+select *
+from Catalog
+select distinct pname 
+from Parts p, Catalog c 
+where p.pid=c.pid and c.s_id in (select s_id 
+                                from Supplier);
+select s.s_name
+from Supplier s
+where
+((select count(p.pid)
+  from Parts p)=(select count(c.pid)
+                 from Catalog c
+                 where c.s_id=s.s_id));
+select s_name 
+from Supplier
+where s_id in (select c.s_id 
+              from Catalog c 
+              where c.pid in (select p.pid 
+                              from parts p 
+                              where colour="Red"));
+select pname 
+from Parts 
+where pid in (select pid 
+              from Catalog 
+              where s_id=(select s_id 
+                         from Supplier 
+                         where s_name="Acme Widget") and 
+                         pid not in (select distinct pid 
+                                     from Catalog 
+                                     where s_id!=(select s_id from Supplier where s_name="Acme Widget")))
+select s_id
+from Catalog c
+where cost>(select Avg(cost)
+            from Catalog p
+            where c.pid=p.pid
+            group by pid); 
+select s_name,pid
+from Supplier s,Catalog c
+where s.s_id = c.s_id = c.s_id 
+and s.s_id in (select s_id
+               from Catalog
+               where cost= (select max(cost)
+                            from Catalog p
+                            where c.pid=p.pid
+                            group by pid));
