@@ -1,0 +1,173 @@
+create database proctorsystem15
+use proctorsystem15
+create table Faculty
+(
+f_id int,
+Name_ varchar (30),
+mob_num int,
+primary key (f_id)
+);
+create table Student
+(
+usn int,
+s_name varchar (30),
+dept varchar (30),
+ph_num int,
+email varchar (50),
+primary key (usn)
+);
+create table Department
+(
+d_num int,
+d_name varchar(30),
+Hod_id int,
+hod_name varchar(30),
+primary key (Hod_id)
+);
+create table Meetstudent
+(
+sl_num int,
+ddate date,
+purpose varchar (50),
+usn int,
+proct_id int,
+primary key (usn,proct_id),
+foreign key (usn) references Student (usn),
+foreign key (proct_id) references Faculty (f_id)
+);
+create table Meetparent 
+(
+sl_num int,
+ddate date,
+purpose varchar (50),
+usn int,
+proct_id int,
+primary key (usn,proct_id),
+foreign key (usn) references Student (usn),
+foreign key (proct_id) references Faculty (f_id)
+);
+create table LeaveRecord 
+(
+sl_num int,
+ddate date,
+reason varchar (50),
+duration varchar (50),
+usn int,
+proct_id int,
+primary key (usn,proct_id),
+foreign key (usn) references Student (usn),
+foreign key (proct_id) references Faculty (f_id)
+);
+create table ActivityRec
+(
+sl_num int,
+ddate date,
+reason varchar (50),
+duration varchar (50),
+usn int,
+proct_id int,
+primary key (usn,proct_id),
+foreign key (usn) references Student (usn),
+foreign key (proct_id) references Faculty (f_id)
+);
+create table SemDetails
+(
+sem_num int,
+course_reg int,
+attendanceInPer int,
+Cie_marks int,
+See_marks int,
+Sgpa int,
+Cgpa int,
+grade varchar (10),
+usn int,
+proct_id int,
+primary key (usn,proct_id),
+foreign key (usn) references Student (usn),
+foreign key (proct_id) references Faculty (f_id)
+);
+create table HOD
+(
+H_id int,
+proct_id int,
+stud_id int,
+primary key (H_id),
+foreign key (stud_id) references Student (usn),
+foreign key (proct_id) references Faculty (f_id),
+foreign key (H_id) references Department (Hod_id)
+);
+insert into Faculty
+values (101,"Ram",903290749),
+(102,"Krishn",908877229),
+(103,"Raja",988765343),
+(104,"kartha",987654321),
+(105,"rambo",908743256);
+insert into Student
+values (201,"Sharath","CSE",911234508,"sharath123@email"),
+(202,"tarun","ECE",809754123,"tara9090@gmail"),
+(203,"karan","Civil",789349174,"karoc@email"),
+(204,"yuzi","Mech",630559109,"yuzz4@email"),
+(205,"ramesh","CSE",993991002,"rameshrockss@gmail");
+insert into Department
+values (340,"CSE",900,"sara"),
+(341,"ECE",901,"Isha"),
+(342,"Civil",902,"Prabhu"),
+(343,"Mech",903,"Selva"),
+(344,"Biotech",904,"Nayanthara");
+insert into Meetstudent
+values (1,"2023-01-10","Update details",201,101),
+(2,"2022-09-12","Less Marks",202,102),
+(3,"2022-09-12","Less Attendance",203,103),
+(4,"2022-09-12","Activity points",204,104),
+(5,"2022-09-12","Passport photo",205,105);
+insert into Meetparent
+values (1,"2023-01-10","information",201,101),
+(2,"2022-09-12","talk about academics",202,102),
+(3,"2022-09-12","Less Attendance",203,103),
+(4,"2022-09-12","Activity points",204,104),
+(5,"2022-09-12","details",205,105);
+insert into LeaveRecord
+values (1,"2022-09-11","Attending function","2 days",201,101),
+(2,"2022-09-07","Going home","5 days",202,102),
+(3,"2022-08-03","Chess championship","1 week",203,103),
+(4,"2022-07-09","Sister marriage","10 days",204,104),
+(5,"2022-06-08","Bike accident","14 days",205,105);
+insert into ActivityRec
+values (1,"2022-02-11","Badminton","12 days",201,101),
+(2,"2023-01-07","Phaseshift","3 days",202,102),
+(3,"2022-12-09","NSS rally","2 days",203,103),
+(4,"2022-09-01","Mud rally","4 days",204,104),
+(5,"2022-05-05","Cricket championship","10 days",205,105); 
+insert into SemDetails
+values (3,6,86,40,87,8.3,8.1,"A",201,101),
+(5,6,81,29,56,6.6,6.3,"C",202,102),
+(3,6,77,18,29,5.5,5.4,"F",203,103),
+(3,6,90,49,98,9.8,9.0,"A",204,104),
+(3,6,51,40,86,8.0,7.6,"B",205,105);
+select *
+from Faculty
+select *
+from Student
+select *
+from Meetstudent
+select *
+from Meetparent
+select *
+from LeaveRecord
+select *
+from ActivityRec
+select *
+from SemDetails
+select s.s_name
+from Student s
+where s.usn in ( select g.usn
+from SemDetails g
+                where g.grade="F");
+select s.s_name
+from Student s
+where s.usn in ( select g.usn
+from SemDetails g
+                where g.cgpa<8.5);
+update SemDetails
+set grade="S"
+where usn="201";
